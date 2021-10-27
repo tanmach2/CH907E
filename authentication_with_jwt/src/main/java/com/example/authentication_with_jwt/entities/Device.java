@@ -20,6 +20,9 @@ public class Device {
     @OneToMany(mappedBy = "device")
     private Set<TemperatureData> temperatureDataSet;
 
+    @OneToMany(mappedBy = "device")
+    private Set<WaterFlowData> waterFlowDataSet;
+
     public Device() {
     }
 

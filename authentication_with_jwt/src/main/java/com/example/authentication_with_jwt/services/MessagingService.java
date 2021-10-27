@@ -18,6 +18,9 @@ public class MessagingService {
     private TemperatureDataService temperatureDataService;
 
     @Autowired
+    private WaterFlowDataService waterFlowDataService;
+
+    @Autowired
     private IMqttClient mqttClient;
 
     public void publish(final String topic, final String payload, int qos, boolean retained) throws MqttPersistenceException, MqttException {
@@ -36,7 +39,27 @@ public class MessagingService {
         mqttClient.subscribeWithResponse(topic, (tpic, message) -> {
 //            System.out.println("deviceService: " + deviceService);
 //            System.out.println(message.getId()+ "->" + new String(message.getPayload()));
-            if(topic == "temperature") {
+//            if(topic == "temperature") {
+//                try{
+//                    System.out.println("received message: " + message.toString());
+//                    JSONObject jsonObject = new JSONObject(message.toString());
+//                    System.out.println(jsonObject);
+//                    String deviceSerial = jsonObject.getString("serial");
+//                    Device device = deviceService.getDeviceBySerial(deviceSerial);
+//                    if (device == null){
+//                        System.out.println("Device with serial " + deviceSerial + "  not found");
+//
+//                    }else {
+//                        temperatureDataService.insertTemperatureData(jsonObject.getFloat("hum"),
+//                                jsonObject.getFloat("temp"), jsonObject.getLong("device_time"), device);
+//                    }
+//                }catch (Exception e){
+//                    System.out.println("Exception: " + e.getMessage());
+//                }
+//            }
+
+
+            if(topic == "waterFlow") {
                 try{
                     System.out.println("received message: " + message.toString());
                     JSONObject jsonObject = new JSONObject(message.toString());
@@ -47,8 +70,9 @@ public class MessagingService {
                         System.out.println("Device with serial " + deviceSerial + "  not found");
 
                     }else {
-                        temperatureDataService.insertTemperatureData(jsonObject.getFloat("hum"),
-                                jsonObject.getFloat("temp"), jsonObject.getLong("device_time"), device);
+                        waterFlowDataService.insertWaterFlowData(jsonObject.getFloat("data_day"),
+                                jsonObject.getFloat("data_in_day"),jsonObject.getFloat("data_month")
+                                , jsonObject.getLong("device_time"), device);
                     }
                 }catch (Exception e){
                     System.out.println("Exception: " + e.getMessage());

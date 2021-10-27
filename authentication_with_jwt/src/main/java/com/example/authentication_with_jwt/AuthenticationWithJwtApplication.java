@@ -27,7 +27,7 @@ public class AuthenticationWithJwtApplication implements CommandLineRunner {
     }
     @Override
     public void run(String... args) throws Exception {
-        final String topic = "temperature";
+        final String topic = "waterFlow";
         messagingService.subscribe(topic);
     }
 }

@@ -4,6 +4,7 @@ import com.example.authentication_with_jwt.entities.Device;
 import com.example.authentication_with_jwt.entities.TemperatureData;
 import com.example.authentication_with_jwt.repositories.DeviceRepository;
 import com.example.authentication_with_jwt.repositories.TemperatureDataRepository;
+import com.example.authentication_with_jwt.repositories.WaterFlowDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,9 @@ public class DeviceService {
 
     @Autowired
     TemperatureDataRepository temperatureDataRepository;
+
+    @Autowired
+    WaterFlowDataRepository waterFlowDataRepository;
 
     public Device getDeviceBySerial(String deviceSerial) throws Exception {
         Device device = deviceRepository.findBySeri(deviceSerial);
