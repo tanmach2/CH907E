@@ -1,8 +1,3 @@
-//platform
-//board = esp32doit-devkit-v1
-//code water_flow
-
-
 #include <Arduino.h>
 #include <PubSubClient.h>
 #include <WiFi.h>
@@ -56,57 +51,8 @@ void reconnecMQTT() {
 }
 
 
-
-
-void IRAM_ATTR pulseCounter()
-{
-  pulseCount++;
-}
-
-
-
-void setup()
-{
-  Serial.begin(115200);
-  Serial.print("connecting to wifi...");
-  Serial.print(ssid);
-  WiFi.begin(ssid,passwd);
-  while(WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.print(WiFi.localIP());
-  mqttClient.setServer(mqtt_server, 1883);
-
-  // pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(SENSOR, INPUT_PULLUP);
-  lcd.begin(16,2);
-  lcd.init();
-  lcd.backlight();
-
-  pulseCount = 0;
-  flowRate = 0.0;
-  flowMilliLitres = 0;
-  dataDay= 0;
-  dataInDay = 0;
-  dataMonth = 0;
-  previousMillis = 0;
-  totalMilliLitres = 0;
-
-  digitalWrite(SENSOR, HIGH);
-  attachInterrupt(digitalPinToInterrupt(SENSOR), pulseCounter, FALLING);
-}
-
-
-void loop()
-{
-  //kiem tra connect wifi 
-  if (!mqttClient.connect(clientId.c_str())){
-    reconnecMQTT();
-  }
-  mqttClient.loop();
-
-  // getWaterFlowinfo();
+void getDataInfo(){
+  
   currentMillis = millis();
   if (currentMillis - previousMillis > interval) 
   {  
@@ -125,6 +71,7 @@ void loop()
     Serial.print("L/min");
     Serial.println("\t");       // Print tab space
     // Print the cumulative total of litres flowed since starting
+
     lcd.setCursor(0,0);
     lcd.print("water flow rate");
     lcd.setCursor(3,1);
@@ -181,4 +128,68 @@ void loop()
     timeMonthCounter = currentMillis;
   }
 
+  
+}
+
+
+
+
+void IRAM_ATTR pulseCounter()
+{
+  pulseCount++;
+}
+
+
+
+void setup()
+{
+  Serial.begin(115200);
+  Serial.print("connecting to wifi...");
+  Serial.print(ssid);
+  WiFi.begin(ssid,passwd);
+  while(WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.print(WiFi.localIP());
+  mqttClient.setServer(mqtt_server, 1883);
+
+  // pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(SENSOR, INPUT_PULLUP);
+  lcd.begin(16,2);
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0,0);
+  lcd.print("connecting wifi..");
+  lcd.setCursor(3,1);
+  lcd.print(ssid);
+  delay(2000);
+
+  pulseCount = 0;
+  flowRate = 0.0;
+  flowMilliLitres = 0;
+  dataDay= 0;
+  dataInDay = 0;
+  dataMonth = 0;
+  previousMillis = 0;
+  totalMilliLitres = 0;
+  lcd.clear();
+
+  digitalWrite(SENSOR, HIGH);
+  attachInterrupt(digitalPinToInterrupt(SENSOR), pulseCounter, FALLING);
+
+}
+
+
+void loop()
+{
+  //kiem tra connect wifi 
+  if (!mqttClient.connect(clientId.c_str())){
+    reconnecMQTT();
+  }
+
+  mqttClient.loop();
+
+  getDataInfo();
+  
 }
